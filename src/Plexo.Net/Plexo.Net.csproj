@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Plexo.Net</PackageId>
+    <Version>1.1.3</Version>
+    <Authors>Plexo, Santiago Navatta</Authors>
+    <Description>Plexo.net is a sync/async .NET Standard client for the Plexo API.  (Official Library)</Description>
+    <AssemblyName>Plexo.net</AssemblyName>
+    <PackageId>Plexo.net</PackageId>
+    <PackageTags>plexo;payment;credit;cards;money;gateway</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="Models\Plexo.Models.csproj" />
+  </ItemGroup>
+</Project>
