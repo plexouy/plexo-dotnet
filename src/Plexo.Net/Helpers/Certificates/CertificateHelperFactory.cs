@@ -1,4 +1,4 @@
-﻿namespace Plexo.Client.SDK.Helpers.Certificates
+﻿namespace Plexo.Net.Helpers.Certificates
 {
     public class CertificateHelperFactory
     {

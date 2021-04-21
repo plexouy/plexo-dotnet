@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Plexo.Client.SDK.Helpers.OperatingSystem;
-using Plexo.Client.SDK.Helpers.Signatures;
-using Plexo.Client.SDK.Models;
-using Plexo.Client.SDK.Models.Exceptions;
+using Plexo.Net.Helpers.OperatingSystem;
+using Plexo.Net.Helpers.Signatures;
+using Plexo.Models;
+using Plexo.Models.Exceptions;
+using Plexo.Models.Common;
 
-namespace Plexo.Client.SDK.Helpers.Certificates
+namespace Plexo.Net.Helpers.Certificates
 {
     public class CertificateHelper
     {

@@ -20,6 +20,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="Models\Plexo.Models.csproj" />
+    <ProjectReference Include="..\Plexo.Net.Models\src\Plexo.Models.csproj" />
   </ItemGroup>
 </Project>

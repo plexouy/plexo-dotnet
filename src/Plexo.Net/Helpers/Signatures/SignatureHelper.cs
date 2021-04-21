@@ -5,10 +5,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Plexo.Client.SDK.Models;
-using Plexo.Client.SDK.Models.Exceptions;
+using Plexo.Models.Common;
+using Plexo.Models.Exceptions;
 
-namespace Plexo.Client.SDK.Helpers.Signatures
+namespace Plexo.Net.Helpers.Signatures
 {
     public class SignatureHelper
     {

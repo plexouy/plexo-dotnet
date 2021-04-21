@@ -10,12 +10,20 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Plexo.Client.SDK.Helpers.Certificates;
-using Plexo.Client.SDK.Helpers.Signatures;
-using Plexo.Client.SDK.Models;
-using Plexo.Client.SDK.Models.Exceptions;
+using Plexo.Net.Helpers.Certificates;
+using Plexo.Net.Helpers.Signatures;
+using Plexo.Models;
+using Plexo.Models.Exceptions;
 using Plexo.Config;
-using Authorization = Plexo.Client.SDK.Models.Authorization;
+using Authorization = Plexo.Models.Sessions.Authorization;
+using Plexo.Models.Common;
+using Plexo.Models.Sessions;
+using Plexo.Models.Commerces;
+using Plexo.Models.Issuers;
+using System.Transactions;
+using Plexo.Models.Transactions;
+using Transaction = Plexo.Models.Transactions.Transaction;
+using Plexo.Models.Instruments;
 
 namespace Plexo
 {

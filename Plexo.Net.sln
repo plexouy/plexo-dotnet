@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plexo.Net", "src\Plexo.Net\Plexo.Net.csproj", "{A5C44629-3E5E-44E9-B487-D52F5D9D05DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plexo.Net.Models", "src\Plexo.Net.Models\Plexo.Models.csproj", "{DA8AC076-30C3-475B-BE6E-3E74FE2BA5FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plexo.Net.Models", "src\Plexo.Net.Models\src\Plexo.Models.csproj", "{DA8AC076-30C3-475B-BE6E-3E74FE2BA5FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

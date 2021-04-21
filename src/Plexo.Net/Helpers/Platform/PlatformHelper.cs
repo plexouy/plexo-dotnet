@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Plexo.Client.SDK.Helpers.OperatingSystem
+namespace Plexo.Net.Helpers.OperatingSystem
 {
     public static class PlatformHelper
     {
