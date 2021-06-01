@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Plexo.Net</PackageId>
-    <Version>1.1.3</Version>
+    <Version>1.1.8</Version>
     <Authors>Plexo, Santiago Navatta</Authors>
     <Description>Plexo.net is a sync/async .NET Standard client for the Plexo API.  (Official Library)</Description>
     <AssemblyName>Plexo.net</AssemblyName>
-    <PackageId>Plexo.net</PackageId>
+    <PackageId>Plexo.Net</PackageId>
     <PackageTags>plexo;payment;credit;cards;money;gateway</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/plexouy/plexo-dotnet</RepositoryUrl>
 
   </PropertyGroup>
   
