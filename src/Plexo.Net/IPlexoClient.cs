@@ -53,5 +53,9 @@ namespace Plexo
         Task<ServerResponse<TransactionCallback>> UnwrapTransactionCallbackAsync(ServerSignedCallback<TransactionCallback> serverSignedTransactionCallback);
         Task<ClientSignedResponse> SignInstrumentCallback(ServerResponse<IntrumentCallback> serverResponse);
         Task<ClientSignedResponse> SignTransactionCallback(ServerResponse<TransactionCallback> serverResponse);
+
+
+        // V2 Issuers
+        Task<PlexoResponse<IEnumerable<PaymentIssuerDto>>> GetPaymentIssuersAsync();
     }
 }

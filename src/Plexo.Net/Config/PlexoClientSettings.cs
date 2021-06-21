@@ -9,5 +9,6 @@ namespace Plexo.Config
         public string CertificateName { get; set; }
         public string CertificatePassword { get; set; }        
         public string CertificatePath { get; set; }
+        public string BaseUrl { get; set; }
     }
 }

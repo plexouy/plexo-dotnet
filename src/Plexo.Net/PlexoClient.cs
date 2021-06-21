@@ -620,9 +620,12 @@ namespace Plexo
                     }
 
                     verify.Verify<ServerSignedResponse<PublicKeyInfo>, ServerResponse<PublicKeyInfo>>(r);
-                    if (CertificateHelperFactory.Instance._verifyKeys.ContainsKey(r.Object.Object.Response.Fingerprint)) {
+                    if (CertificateHelperFactory.Instance._verifyKeys.ContainsKey(r.Object.Object.Response.Fingerprint))
+                    {
                         CertificateHelperFactory.Instance._verifyKeys[r.Object.Object.Response.Fingerprint] = c;
-                    } else {
+                    }
+                    else
+                    {
                         CertificateHelperFactory.Instance._verifyKeys.Add(r.Object.Object.Response.Fingerprint, c);
                     }
                     return c;
@@ -769,6 +772,46 @@ namespace Plexo
             }
 
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
+        public async Task<PlexoResponse<IEnumerable<PaymentIssuerDto>>> GetPaymentIssuersAsync()
+        {
+
+            var response = await _httpClient.GetAsync(Settings.BaseUrl.TrimEnd('/') + "/v1/issuers", HttpCompletionOption.ResponseHeadersRead);
+            if (response.IsSuccessStatusCode)
+            {
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(true, serializer.Deserialize<IEnumerable<PaymentIssuerDto>>(jsonReader));
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null, serializer.Deserialize<ProblemDetails>(jsonReader));
+                }
+            }
+            else
+            {
+                return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null, new ProblemDetails
+                {
+                    Detail = "An unknown error ocurred on the server",
+                    Title = "Client exception",
+                    Status = (int)response.StatusCode,
+                    Instance = "Plexo-net"
+                });
+            }
         }
     }
 }
