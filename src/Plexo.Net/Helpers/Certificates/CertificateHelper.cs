@@ -80,16 +80,15 @@ namespace Plexo.Net.Helpers.Certificates
             {
                 stores = new StoreName[]
                 {
-                    StoreName.My, StoreName.TrustedPublisher, StoreName.TrustedPeople, StoreName.Root,
-                    StoreName.CertificateAuthority, StoreName.AuthRoot, StoreName.AddressBook
+                    StoreName.My                    
                 };
             }
             else if (PlatformHelper.IsLinux())
             {
                 stores = new StoreName[]
                 {
-                    StoreName.Root,
-                    StoreName.CertificateAuthority
+                    StoreName.My,
+                    StoreName.Root
                 };
             }
             else
