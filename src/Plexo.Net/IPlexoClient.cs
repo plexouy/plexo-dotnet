@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Plexo.Models;
-using Plexo.Models.Commerces;
-using Plexo.Models.Common;
-using Plexo.Models.Instruments;
-using Plexo.Models.Issuers;
-using Plexo.Models.Sessions;
-using Plexo.Models.Transactions;
 
 namespace Plexo
 {

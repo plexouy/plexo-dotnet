@@ -6,8 +6,6 @@ using System.Threading;
 using Plexo.Net.Helpers.OperatingSystem;
 using Plexo.Net.Helpers.Signatures;
 using Plexo.Models;
-using Plexo.Models.Exceptions;
-using Plexo.Models.Common;
 
 namespace Plexo.Net.Helpers.Certificates
 {
