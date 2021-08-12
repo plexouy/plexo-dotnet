@@ -33,6 +33,7 @@ namespace Plexo
         Task<ServerResponse<TransactionCursor>> ObtainTransactionsAsync(TransactionQuery query);
         Task<ServerResponse<Transaction>> StartReserveAsync(ReserveRequest payment);
         Task<ServerResponse<Transaction>> StatusAsync(Reference payment);
+        Task<ServerResponse<Transaction>> RefundAsync(RefundRequest payment);
 
         // Instruments
         Task<ServerResponse<List<PaymentInstrument>>> GetInstrumentsAsync(AuthorizationInfo info);

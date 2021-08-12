@@ -377,6 +377,38 @@ namespace Plexo
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
 
+        public async Task<ServerResponse<Transaction>> RefundAsync(RefundRequest payment)
+        {
+            // Sign request
+            var signedClientRequest = SignClientRequest(payment);
+
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            ServerSignedResponse<Transaction> signedServerResponse;
+
+            // Post async signed request as ByteArrayContent
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "Operation/Refund"))
+            {
+                request.Content = byteContent;
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<Transaction>>(jsonReader);
+                }
+            }
+
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
         public async Task<ServerResponse<Transaction>> StartReserveAsync(ReserveRequest payment)
         {
             // Sign request
@@ -805,5 +837,7 @@ namespace Plexo
                 });
             }
         }
+
+
     }
 }
