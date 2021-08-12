@@ -105,5 +105,5 @@ Certificate/
 
 ## Current limitations
 
-- No built support for automatic retries.
+- No built-in support for automatic retries.
 - There's no support for multiple clients certificates on the same application.
