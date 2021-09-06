@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.1.15</Version>
+    <Version>1.1.16</Version>
     <Authors>Plexo, Santiago Navatta</Authors>
     <Description>Plexo.net is a .NET Standard client for the Plexo API.</Description>
     <AssemblyName>Plexo.net</AssemblyName>
