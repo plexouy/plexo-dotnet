@@ -1,0 +1,6 @@
+
+Crear nuget parado en la raiz del proyecto
+dotnet build --configuration release
+dotnet pack --configuration Release
+
+Esto genera un nupkg para Models y el SDK.

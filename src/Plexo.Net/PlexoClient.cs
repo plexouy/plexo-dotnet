@@ -838,6 +838,36 @@ namespace Plexo
             }
         }
 
+        public async Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(CreateExternalInstrumentRequest request)
+        {
+            // Sign request
+            var signedClientRequest = SignClientRequest(request);
 
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            ServerSignedResponse<ExternalPaymentInstrument> signedServerResponse;
+
+            // Post async signed request as ByteArrayContent
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "Instruments/ExternalAdd"))
+            {
+                httpRequest.Content = byteContent;
+
+                var response = await _httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<ExternalPaymentInstrument>>(jsonReader);
+                }
+            }
+
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
     }
 }

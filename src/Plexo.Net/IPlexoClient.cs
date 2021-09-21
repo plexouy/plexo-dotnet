@@ -39,7 +39,8 @@ namespace Plexo
         Task<ServerResponse<List<PaymentInstrument>>> GetInstrumentsAsync(AuthorizationInfo info);
         Task<ServerResponse> DeleteInstrumentAsync(DeleteInstrumentRequest info);
         Task<ServerResponse<PaymentInstrument>> CreateBankInstrumentAsync(CreateBankInstrumentRequest request);
-
+        Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(CreateExternalInstrumentRequest request);
+        
         // Issuers
         Task<ServerResponse<List<IssuerInfo>>> GetSupportedIssuersAsync();
 
