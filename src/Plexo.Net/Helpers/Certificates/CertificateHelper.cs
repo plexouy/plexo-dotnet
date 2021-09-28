@@ -41,6 +41,11 @@ namespace Plexo.Net.Helpers.Certificates
             ClientSignKeys.Add(Settings.ClientName.Trim(), new SignatureHelper(x509Certificate, true));
         }
 
+        public CertificateHelper(X509Certificate2 cert)
+        {
+            ClientSignKeys.Add(Settings.ClientName.Trim(), new SignatureHelper(cert, true));
+        }
+
         private Dictionary<string, SignatureHelper> ClientSignKeys { get; } = new Dictionary<string, SignatureHelper>();
 
         public T SignClient<T, TS>(string clientname, TS obj) where T : SignedObject<TS>, new()
