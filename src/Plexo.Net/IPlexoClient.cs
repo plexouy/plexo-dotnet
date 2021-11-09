@@ -43,6 +43,7 @@ namespace Plexo
         
         // Issuers
         Task<ServerResponse<List<IssuerInfo>>> GetSupportedIssuersAsync();
+        Task<ServerResponse<List<IssuerPaymentProcessor>>> GetSupportedPaymentProcessorsAsync();
 
         // Utils
         Task<ServerResponse<IntrumentCallback>> UnwrapInstrumentCallbackAsync(ServerSignedCallback<IntrumentCallback> serverSignedInstrumentCallback);

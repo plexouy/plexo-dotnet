@@ -838,6 +838,8 @@ namespace Plexo
             }
         }
 
+
+
         public async Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(CreateExternalInstrumentRequest request)
         {
             // Sign request
@@ -866,6 +868,24 @@ namespace Plexo
                     signedServerResponse = serializer.Deserialize<ServerSignedResponse<ExternalPaymentInstrument>>(jsonReader);
                 }
             }
+
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
+        public async Task<ServerResponse<List<IssuerPaymentProcessor>>> GetSupportedPaymentProcessorsAsync()
+        {
+            var signedClientRequest = SignClientRequest();
+
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            // Post async signed request as ByteArrayContent
+            var response = await _httpClient.PostAsync("PaymentProcessors", byteContent).ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var signedServerResponse = JsonConvert.DeserializeObject<ServerSignedResponse<List<IssuerPaymentProcessor>>>(result);
 
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
