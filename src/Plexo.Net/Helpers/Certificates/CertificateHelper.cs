@@ -136,7 +136,7 @@ namespace Plexo.Net.Helpers.Certificates
 
                 var pathToCertificate = Path.GetFullPath(Path.Combine(path, $"{certname}.pfx"));
 
-                using (var stream = File.Open(pathToCertificate, FileMode.Open))
+                using (var stream = File.Open(pathToCertificate, FileMode.Open, FileAccess.Read))
                 {
                     var certificatePassword = password;
 

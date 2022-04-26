@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.1.23</Version>
+    <Version>1.1.31</Version>
     <Authors>Plexo, Santiago Navatta</Authors>
     <Description>Plexo.net is a .NET Standard client for the Plexo API.</Description>
     <AssemblyName>Plexo.net</AssemblyName>
@@ -9,7 +9,7 @@
     <PackageTags>plexo;payment;credit;cards;money;gateway</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/plexouy/plexo-dotnet</RepositoryUrl>
 
   </PropertyGroup>
