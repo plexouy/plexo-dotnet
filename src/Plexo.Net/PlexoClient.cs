@@ -31,12 +31,26 @@ namespace Plexo
                 throw new ArgumentNullException(nameof(plexoClientSettings));
             }
 
-            _httpClient = new HttpClient();
             _logger = logger;
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = Settings.GatewayUrl;
 
             Settings.Set(plexoClientSettings.Value);
+        }
 
+        public PlexoClient(PlexoClientSettings plexoClientSettings, HttpClient httpClient = null,
+            ILogger<PlexoClient> logger = null)
+        {
+            if (plexoClientSettings is null)
+            {
+                throw new ArgumentNullException(nameof(plexoClientSettings));
+            }
+
+            _logger = logger;
+            _httpClient = httpClient ?? new HttpClient();
             _httpClient.BaseAddress = Settings.GatewayUrl;
+
+            Settings.Set(plexoClientSettings);
         }
 
         public async Task<ServerResponse<Session>> AuthorizeAsync(Authorization authorization)
@@ -54,7 +68,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
 
                 response.EnsureSuccessStatusCode();
 
@@ -277,7 +292,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -328,7 +344,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -360,7 +377,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -392,7 +410,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -481,7 +500,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -491,7 +511,8 @@ namespace Plexo
                     var serializer = new JsonSerializer();
 
                     // Read the response content from a stream
-                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<List<PaymentInstrument>>>(jsonReader);
+                    signedServerResponse =
+                        serializer.Deserialize<ServerSignedResponse<List<PaymentInstrument>>>(jsonReader);
                 }
             }
 
@@ -513,7 +534,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -530,7 +552,8 @@ namespace Plexo
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
 
-        public async Task<ServerResponse<PaymentInstrument>> CreateBankInstrumentAsync(CreateBankInstrumentRequest request)
+        public async Task<ServerResponse<PaymentInstrument>> CreateBankInstrumentAsync(
+            CreateBankInstrumentRequest request)
         {
             // Sign request
             var signedClientRequest = SignClientRequest(request);
@@ -552,7 +575,6 @@ namespace Plexo
         public async Task<ServerResponse<IntrumentCallback>> UnwrapInstrumentCallbackAsync(
             ServerSignedCallback<IntrumentCallback> serverSignedInstrumentCallback)
         {
-
             return await UnwrapCallbackAsync(serverSignedInstrumentCallback).ConfigureAwait(false);
         }
 
@@ -584,7 +606,11 @@ namespace Plexo
 
         private ByteArrayContent SignByteArrayContent(object signedClientRequest)
         {
-            var content = JsonConvert.SerializeObject(signedClientRequest);
+            var content = JsonConvert.SerializeObject(signedClientRequest,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore
+                });
             var buffer = Encoding.UTF8.GetBytes(content);
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -620,8 +646,8 @@ namespace Plexo
                             ("es",
                                 "Huella invalida o vencida, el servido retorna: " +
                                 ((r.Object.Object.I18NErrorMessages.ContainsKey("es")
-                                     ? r.Object.Object.I18NErrorMessages["es"]
-                                     : r.Object.Object.ErrorMessage) ?? "")));
+                                    ? r.Object.Object.I18NErrorMessages["es"]
+                                    : r.Object.Object.ErrorMessage) ?? "")));
                     }
 
                     var cert = new X509Certificate2(Convert.FromBase64String(r.Object.Object.Response.Key));
@@ -632,7 +658,7 @@ namespace Plexo
                         verify = CertificateHelperFactory.Instance._verifyKeys[r.Object.Fingerprint];
                     }
                     else if (r.Object.Fingerprint.Equals(r.Object.Object.Response.Fingerprint,
-                        StringComparison.InvariantCultureIgnoreCase))
+                                 StringComparison.InvariantCultureIgnoreCase))
                     {
                         verify = c;
                     }
@@ -652,6 +678,7 @@ namespace Plexo
                     {
                         CertificateHelperFactory.Instance._verifyKeys.Add(r.Object.Object.Response.Fingerprint, c);
                     }
+
                     return c;
                 }
                 finally
@@ -667,14 +694,15 @@ namespace Plexo
         {
             var clientRequest = WrapClient(unsignedRequest);
             return CertificateHelperFactory.Instance
-                    .SignClient<ClientSignedRequest<T>, ClientRequest<T>>(
-                        Settings.ClientName, clientRequest);
+                .SignClient<ClientSignedRequest<T>, ClientRequest<T>>(
+                    Settings.ClientName, clientRequest);
         }
 
         private ClientSignedRequest SignClientRequest()
         {
             var r = new ClientRequest { Client = Settings.ClientName };
-            return CertificateHelperFactory.Instance.SignClient<ClientSignedRequest, ClientRequest>(Settings.ClientName, r);
+            return CertificateHelperFactory.Instance.SignClient<ClientSignedRequest, ClientRequest>(Settings.ClientName,
+                r);
         }
 
         private ClientRequest<T> WrapClient<T>(T obj)
@@ -761,7 +789,8 @@ namespace Plexo
             }
         }
 
-        public async Task<ServerResponse<TransactionCallback>> UnwrapTransactionCallbackAsync(ServerSignedCallback<TransactionCallback> serverSignedTransactionCallback)
+        public async Task<ServerResponse<TransactionCallback>> UnwrapTransactionCallbackAsync(
+            ServerSignedCallback<TransactionCallback> serverSignedTransactionCallback)
         {
             return await UnwrapCallbackAsync(serverSignedTransactionCallback).ConfigureAwait(false);
         }
@@ -781,7 +810,8 @@ namespace Plexo
             {
                 request.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -800,8 +830,8 @@ namespace Plexo
 
         public async Task<PlexoResponse<IEnumerable<PaymentIssuerDto>>> GetPaymentIssuersAsync()
         {
-
-            var response = await _httpClient.GetAsync(Settings.BaseUrl.TrimEnd('/') + "/v1/issuers", HttpCompletionOption.ResponseHeadersRead);
+            var response = await _httpClient.GetAsync(Settings.BaseUrl.TrimEnd('/') + "/v1/issuers",
+                HttpCompletionOption.ResponseHeadersRead);
             if (response.IsSuccessStatusCode)
             {
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -811,7 +841,8 @@ namespace Plexo
                     var serializer = new JsonSerializer();
 
                     // Read the response content from a stream
-                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(true, serializer.Deserialize<IEnumerable<PaymentIssuerDto>>(jsonReader));
+                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(true,
+                        serializer.Deserialize<IEnumerable<PaymentIssuerDto>>(jsonReader));
                 }
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -823,24 +854,26 @@ namespace Plexo
                     var serializer = new JsonSerializer();
 
                     // Read the response content from a stream
-                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null, serializer.Deserialize<ProblemDetails>(jsonReader));
+                    return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null,
+                        serializer.Deserialize<ProblemDetails>(jsonReader));
                 }
             }
             else
             {
-                return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null, new ProblemDetails
-                {
-                    Detail = "An unknown error ocurred on the server",
-                    Title = "Client exception",
-                    Status = (int)response.StatusCode,
-                    Instance = "Plexo-net"
-                });
+                return new PlexoResponse<IEnumerable<PaymentIssuerDto>>(false, null,
+                    new ProblemDetails
+                    {
+                        Detail = "An unknown error ocurred on the server",
+                        Title = "Client exception",
+                        Status = (int)response.StatusCode,
+                        Instance = "Plexo-net"
+                    });
             }
         }
 
 
-
-        public async Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(CreateExternalInstrumentRequest request)
+        public async Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(
+            CreateExternalInstrumentRequest request)
         {
             // Sign request
             var signedClientRequest = SignClientRequest(request);
@@ -855,7 +888,8 @@ namespace Plexo
             {
                 httpRequest.Content = byteContent;
 
-                var response = await _httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                var response = await _httpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -865,7 +899,8 @@ namespace Plexo
                     var serializer = new JsonSerializer();
 
                     // Read the response content from a stream
-                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<ExternalPaymentInstrument>>(jsonReader);
+                    signedServerResponse =
+                        serializer.Deserialize<ServerSignedResponse<ExternalPaymentInstrument>>(jsonReader);
                 }
             }
 
@@ -885,7 +920,8 @@ namespace Plexo
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var signedServerResponse = JsonConvert.DeserializeObject<ServerSignedResponse<List<IssuerPaymentProcessor>>>(result);
+            var signedServerResponse =
+                JsonConvert.DeserializeObject<ServerSignedResponse<List<IssuerPaymentProcessor>>>(result);
 
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }

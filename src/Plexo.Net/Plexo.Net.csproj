@@ -11,6 +11,7 @@
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/plexouy/plexo-dotnet</RepositoryUrl>
+    <LangVersion>default</LangVersion>
 
   </PropertyGroup>
   
