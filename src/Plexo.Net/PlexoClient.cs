@@ -33,9 +33,9 @@ namespace Plexo
 
             _logger = logger;
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = Settings.GatewayUrl;
-
             Settings.Set(plexoClientSettings.Value);
+
+            _httpClient.BaseAddress = Settings.GatewayUrl;
         }
 
         public PlexoClient(PlexoClientSettings plexoClientSettings, HttpClient httpClient = null,
@@ -48,9 +48,9 @@ namespace Plexo
 
             _logger = logger;
             _httpClient = httpClient ?? new HttpClient();
-            _httpClient.BaseAddress = Settings.GatewayUrl;
-
             Settings.Set(plexoClientSettings);
+
+            _httpClient.BaseAddress = Settings.GatewayUrl;
         }
 
         public async Task<ServerResponse<Session>> AuthorizeAsync(Authorization authorization)
