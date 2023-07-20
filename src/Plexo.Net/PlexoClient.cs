@@ -7,8 +7,6 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Plexo.Config;
 using Plexo.Models;
@@ -22,31 +20,16 @@ namespace Plexo
     public class PlexoClient : IPlexoClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<PlexoClient> _logger;
 
-        public PlexoClient(IOptions<PlexoClientSettings> plexoClientSettings, ILogger<PlexoClient> logger = null)
+
+
+        public PlexoClient(PlexoClientSettings plexoClientSettings, HttpClient httpClient = null)
         {
             if (plexoClientSettings is null)
             {
                 throw new ArgumentNullException(nameof(plexoClientSettings));
             }
 
-            _logger = logger;
-            _httpClient = new HttpClient();
-            Settings.Set(plexoClientSettings.Value);
-
-            _httpClient.BaseAddress = Settings.GatewayUrl;
-        }
-
-        public PlexoClient(PlexoClientSettings plexoClientSettings, HttpClient httpClient = null,
-            ILogger<PlexoClient> logger = null)
-        {
-            if (plexoClientSettings is null)
-            {
-                throw new ArgumentNullException(nameof(plexoClientSettings));
-            }
-
-            _logger = logger;
             _httpClient = httpClient ?? new HttpClient();
             Settings.Set(plexoClientSettings);
 
@@ -723,7 +706,6 @@ namespace Plexo
             }
             catch (FingerprintException e)
             {
-                _logger?.LogError(e, "Exception trying to unwrap the request");
                 response.ErrorMessage = e.Message;
                 response.I18NErrorMessages = e.I18NErrorMessages;
                 response.ResultCode = e.Code;
@@ -731,7 +713,6 @@ namespace Plexo
             }
             catch (Exception e)
             {
-                _logger?.LogCritical(e, "Critical Exception trying to unwrap the request");
                 response.ErrorMessage = e.Message;
                 response.ResultCode = ResultCodes.SystemError;
                 return response;
@@ -749,7 +730,6 @@ namespace Plexo
             }
             catch (FingerprintException e)
             {
-                _logger?.LogError(e, "Exception trying to unwrap the response");
                 response.ErrorMessage = e.Message;
                 response.I18NErrorMessages = e.I18NErrorMessages;
                 response.ResultCode = e.Code;
@@ -757,7 +737,6 @@ namespace Plexo
             }
             catch (Exception e)
             {
-                _logger?.LogCritical(e, "Critical Exception trying to unwrap the response");
                 response.ErrorMessage = e.Message;
                 response.ResultCode = ResultCodes.SystemError;
                 return response;
@@ -775,7 +754,6 @@ namespace Plexo
 
             catch (FingerprintException e)
             {
-                _logger?.LogError(e, "Fingerprint Exception trying to unwrap the response");
                 response.ErrorMessage = e.Message;
                 response.I18NErrorMessages = e.I18NErrorMessages;
                 response.ResultCode = e.Code;
@@ -783,7 +761,6 @@ namespace Plexo
             }
             catch (Exception e)
             {
-                _logger?.LogCritical(e, "Critical Exception trying to unwrap the response");
                 response.ErrorMessage = e.Message;
                 response.ResultCode = ResultCodes.SystemError;
                 return response;
@@ -800,8 +777,6 @@ namespace Plexo
         {
             // Sign request
             var signedClientRequest = SignClientRequest(expressCheckout);
-
-            _logger.LogInformation("Client request {@signedClientRequest}", signedClientRequest);
 
             // Signed request to ByteArrayContent
             var byteContent = SignByteArrayContent(signedClientRequest);
