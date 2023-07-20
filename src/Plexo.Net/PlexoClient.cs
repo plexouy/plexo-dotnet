@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Plexo.Config;
+using Plexo.Models;
 using Plexo.Net.Helpers.Certificates;
 using Plexo.Net.Helpers.Signatures;
-using Plexo.Models;
-using Plexo.Config;
 using Authorization = Plexo.Models.Authorization;
 using Transaction = Plexo.Models.Transaction;
 
@@ -609,7 +609,8 @@ namespace Plexo
             var content = JsonConvert.SerializeObject(signedClientRequest,
                 new JsonSerializerSettings
                 {
-                    Formatting = Formatting.None, NullValueHandling = NullValueHandling.Ignore
+                    Formatting = Formatting.None,
+                    NullValueHandling = NullValueHandling.Ignore
                 });
             var buffer = Encoding.UTF8.GetBytes(content);
             var byteContent = new ByteArrayContent(buffer);
@@ -799,6 +800,8 @@ namespace Plexo
         {
             // Sign request
             var signedClientRequest = SignClientRequest(expressCheckout);
+
+            _logger.LogInformation("Client request {@signedClientRequest}", signedClientRequest);
 
             // Signed request to ByteArrayContent
             var byteContent = SignByteArrayContent(signedClientRequest);
