@@ -77,9 +77,9 @@ namespace Plexo.Net.Helpers.Certificates
 
         private X509Certificate2 SearchCertificate(string certname, string password, string path)
         {
-            StoreName[] stores;
             X509Certificate2 localCertificate = null;
-            StoreLocation[] storeLocations;
+            StoreName[]? stores = null;
+            StoreLocation[]? storeLocations = null;
 
             // Get the certificate from the operative system key store
             if (PlatformHelper.IsWindows())
@@ -90,7 +90,7 @@ namespace Plexo.Net.Helpers.Certificates
                 };
                 storeLocations = new StoreLocation[] { StoreLocation.CurrentUser, StoreLocation.LocalMachine };
             }
-            else if (PlatformHelper.IsLinux())
+            if (PlatformHelper.IsLinux())
             {
                 stores = new StoreName[]
                 {
@@ -99,29 +99,27 @@ namespace Plexo.Net.Helpers.Certificates
                 };
                 storeLocations = new StoreLocation[] { StoreLocation.CurrentUser };
             }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
 
-
-            foreach (var location in storeLocations)
+            if (storeLocations is not null && stores is not null)
             {
-                foreach (var s in stores)
+                foreach (var location in storeLocations)
                 {
-                    using var store = new X509Store(s, location);
-                    store.Open(OpenFlags.ReadOnly);
-                    foreach (var m in store.Certificates)
+                    foreach (var s in stores)
                     {
-                        if (m.Subject.IndexOf("CN=" + certname, 0, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
-                        m.Issuer.IndexOf("CN=" + certname, 0, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                        using var store = new X509Store(s, location);
+                        store.Open(OpenFlags.ReadOnly);
+                        foreach (var m in store.Certificates)
                         {
-                            store.Close();
-                            localCertificate = m;
+                            if (m.Subject.IndexOf("CN=" + certname, 0, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
+                            m.Issuer.IndexOf("CN=" + certname, 0, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                            {
+                                store.Close();
+                                localCertificate = m;
+                            }
                         }
-                    }
 
-                    store.Close();
+                        store.Close();
+                    }
                 }
             }
 
