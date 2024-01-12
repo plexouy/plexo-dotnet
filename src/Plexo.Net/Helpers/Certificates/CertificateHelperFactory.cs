@@ -8,9 +8,9 @@ namespace Plexo.Net.Helpers.Certificates
         private static CertificateHelper _instance;
         public static CertificateHelper Instance => _instance ?? (_instance = new CertificateHelper());
 
-        public static void Initialize(X509Certificate2 cert)
+        public static void Initialize(string clientName, X509Certificate2 cert)
         {
-            _instance = new CertificateHelper(cert);
+            _instance = new CertificateHelper(clientName, cert);
         }
     }
 }

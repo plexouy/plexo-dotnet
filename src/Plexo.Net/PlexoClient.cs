@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -31,6 +32,9 @@ namespace Plexo
             }
 
             _httpClient = httpClient ?? new HttpClient();
+
+            _clientName = plexoClientSettings.ClientName;
+
             Settings.Set(plexoClientSettings);
 
             _httpClient.BaseAddress = Settings.GatewayUrl;
@@ -411,6 +415,39 @@ namespace Plexo
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
 
+        public async Task<ServerResponse<Transaction>> RefundV2Async(RefundRequest payment)
+        {
+            // Sign request
+            var signedClientRequest = SignClientRequest(payment);
+
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            ServerSignedResponse<Transaction> signedServerResponse;
+
+            // Post async signed request as ByteArrayContent
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "Operation/RefundV2"))
+            {
+                request.Content = byteContent;
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<Transaction>>(jsonReader);
+                }
+            }
+
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
         public async Task<ServerResponse<Transaction>> StartReserveAsync(ReserveRequest payment)
         {
             // Sign request
@@ -567,7 +604,7 @@ namespace Plexo
             {
                 ResultCode = serverResponse.ResultCode,
                 ErrorMessage = serverResponse.ErrorMessage,
-                Client = Settings.ClientName
+                Client = _clientName
             };
 
             return Task.FromResult(
@@ -580,7 +617,7 @@ namespace Plexo
             {
                 ResultCode = serverResponse.ResultCode,
                 ErrorMessage = serverResponse.ErrorMessage,
-                Client = Settings.ClientName
+                Client = _clientName
             };
 
             return Task.FromResult(
@@ -679,21 +716,19 @@ namespace Plexo
             var clientRequest = WrapClient(unsignedRequest);
             return CertificateHelperFactory.Instance
                 .SignClient<ClientSignedRequest<T>, ClientRequest<T>>(
-                    Settings.ClientName, clientRequest);
+                    _clientName, clientRequest);
         }
 
         private ClientSignedRequest SignClientRequest()
         {
-            var r = new ClientRequest { Client = Settings.ClientName };
-            return CertificateHelperFactory.Instance.SignClient<ClientSignedRequest, ClientRequest>(Settings.ClientName,
-                r);
+            var clientRequest = new ClientRequest { Client = _clientName };
+            return CertificateHelperFactory.Instance.SignClient<ClientSignedRequest, ClientRequest>(_clientName, clientRequest);
         }
 
         private ClientRequest<T> WrapClient<T>(T obj)
         {
-            return new ClientRequest<T> { Client = Settings.ClientName, Request = obj };
+            return new ClientRequest<T> { Client = _clientName, Request = obj };
         }
-
 
         private async Task<ServerResponse<T>> UnwrapCallbackAsync<T>(ServerSignedCallback<T> resp)
         {
@@ -792,17 +827,14 @@ namespace Plexo
                     .ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
-                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                using (var streamReader = new StreamReader(stream))
-                using (var jsonReader = new JsonTextReader(streamReader))
-                {
-                    var serializer = new JsonSerializer();
+                using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var streamReader = new StreamReader(stream);
+                using var jsonReader = new JsonTextReader(streamReader);
+                var serializer = new JsonSerializer();
 
-                    // Read the response content from a stream
-                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<Session>>(jsonReader);
-                }
+                // Read the response content from a stream
+                signedServerResponse = serializer.Deserialize<ServerSignedResponse<Session>>(jsonReader);
             }
-
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
 

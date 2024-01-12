@@ -7,8 +7,9 @@ namespace Plexo.Config
         public string GatewayUrl { get; set; }
         public string ClientName { get; set; }
         public string CertificateName { get; set; }
-        public string CertificatePassword { get; set; }        
+        public string CertificatePassword { get; set; }
         public string CertificatePath { get; set; }
-        public string BaseUrl { get; set; }
+        public string? BaseUrl { get; set; }
+        public IEnumerable<ClientCertificateSettings>? Clients { get; set; }
     }
 }

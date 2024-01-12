@@ -34,13 +34,14 @@ namespace Plexo
         Task<ServerResponse<Transaction>> StartReserveAsync(ReserveRequest payment);
         Task<ServerResponse<Transaction>> StatusAsync(Reference payment);
         Task<ServerResponse<Transaction>> RefundAsync(RefundRequest payment);
+        Task<ServerResponse<Transaction>> RefundV2Async(RefundRequest payment);
 
         // Instruments
         Task<ServerResponse<List<PaymentInstrument>>> GetInstrumentsAsync(AuthorizationInfo info);
         Task<ServerResponse> DeleteInstrumentAsync(DeleteInstrumentRequest info);
         Task<ServerResponse<PaymentInstrument>> CreateBankInstrumentAsync(CreateBankInstrumentRequest request);
         Task<ServerResponse<ExternalPaymentInstrument>> CreateInstrumentAsync(CreateExternalInstrumentRequest request);
-        
+
         // Issuers
         Task<ServerResponse<List<IssuerInfo>>> GetSupportedIssuersAsync();
         Task<ServerResponse<List<IssuerPaymentProcessor>>> GetSupportedPaymentProcessorsAsync();
