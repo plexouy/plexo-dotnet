@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Plexo.Config;
 using Plexo.Models;
+using Plexo.Models.ThreeDS;
 using Plexo.Net.Helpers.Certificates;
 using Plexo.Net.Helpers.Signatures;
 using Authorization = Plexo.Models.Authorization;
@@ -106,6 +107,40 @@ namespace Plexo
 
                     // Read the response content from a stream
                     signedServerResponse = serializer.Deserialize<ServerSignedResponse<Session>>(jsonReader);
+                }
+            }
+
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
+        public async Task<ServerResponse<ThreeDSSession>> ThreeDSValidateAsync(ThreeDSValidation threedsvalidation)
+        {
+            // Sign request
+            var signedClientRequest = SignClientRequest(threedsvalidation);
+
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            ServerSignedResponse<ThreeDSSession> signedServerResponse;
+
+            // Post async signed request as ByteArrayContent
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "3DSValidation"))
+            {
+                request.Content = byteContent;
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
+
+                response.EnsureSuccessStatusCode();
+
+                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+
+                    // Read the response content from a stream
+                    signedServerResponse = serializer.Deserialize<ServerSignedResponse<ThreeDSSession>>(jsonReader);
                 }
             }
 

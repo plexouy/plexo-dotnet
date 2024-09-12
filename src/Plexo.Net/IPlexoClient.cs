@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Plexo.Models;
+using Plexo.Models.ThreeDS;
 
 namespace Plexo
 {
@@ -23,6 +24,7 @@ namespace Plexo
         // Sessions
         Task<ServerResponse<Session>> AuthorizeAsync(Authorization authorization);
         Task<ServerResponse<Session>> ExpressCheckoutAsync(ExpressCheckoutRequest expressCheckout);
+        Task<ServerResponse<ThreeDSSession>> ThreeDSValidateAsync(ThreeDSValidation authorization);
 
         // Transactions
         Task<ServerResponse<Transaction>> PurchaseAsync(PaymentRequest payment);
