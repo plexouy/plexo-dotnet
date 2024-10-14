@@ -28,6 +28,7 @@ namespace Plexo
 
         // Transactions
         Task<ServerResponse<Transaction>> PurchaseAsync(PaymentRequest payment);
+        Task<ServerResponse<SplittedTransaction>> SplitPurchaseAsync(SplitPaymentRequest payment);
         Task<ServerResponse<Transaction>> CancelAsync(CancelRequest cancel);
         Task<ServerResponse<Transaction>> CodeActionAsync(CodeRequest request);
         Task<ServerResponse<Transaction>> EndReserveAsync(Reserve reserve);
