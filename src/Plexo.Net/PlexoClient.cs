@@ -952,6 +952,39 @@ namespace Plexo
             return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
         }
 
+
+        public async Task<ServerResponse<Session>> ExpressCheckoutSplitAsync(ExpressCheckoutSplitRequest expressCheckout)
+        {
+            // Sign request
+            var signedClientRequest = SignClientRequest(expressCheckout);
+
+            _logger?.LogInformation("Client request {@signedClientRequest}", signedClientRequest);
+
+            // Signed request to ByteArrayContent
+            var byteContent = SignByteArrayContent(signedClientRequest);
+
+            ServerSignedResponse<Session> signedServerResponse;
+
+            // Post async signed request as ByteArrayContent
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "ExpressCheckoutSplit"))
+            {
+                request.Content = byteContent;
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var streamReader = new StreamReader(stream);
+                using var jsonReader = new JsonTextReader(streamReader);
+                var serializer = new JsonSerializer();
+
+                // Read the response content from a stream
+                signedServerResponse = serializer.Deserialize<ServerSignedResponse<Session>>(jsonReader);
+            }
+            return await UnwrapResponseAsync(signedServerResponse).ConfigureAwait(false);
+        }
+
         public async Task<PlexoResponse<IEnumerable<PaymentIssuerDto>>> GetPaymentIssuersAsync()
         {
             var response = await _httpClient.GetAsync(Settings.BaseUrl.TrimEnd('/') + "/v1/issuers",

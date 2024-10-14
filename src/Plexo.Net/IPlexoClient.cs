@@ -24,6 +24,7 @@ namespace Plexo
         // Sessions
         Task<ServerResponse<Session>> AuthorizeAsync(Authorization authorization);
         Task<ServerResponse<Session>> ExpressCheckoutAsync(ExpressCheckoutRequest expressCheckout);
+        Task<ServerResponse<Session>> ExpressCheckoutSplitAsync(ExpressCheckoutSplitRequest expressCheckout);
         Task<ServerResponse<ThreeDSSession>> ThreeDSValidateAsync(ThreeDSValidation authorization);
 
         // Transactions
